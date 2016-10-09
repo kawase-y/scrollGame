@@ -10,10 +10,10 @@ settings =
 		-- Supported values for orientation:
 		-- portrait, portraitUpsideDown, landscapeLeft, landscapeRight
 
-		default = "landscapeRight",
-		supported = { "landscapeRight", },
+		default = "portrait",
+		supported = { "portrait", },
 	},
-	
+
 	excludeFiles =
 	{
 		-- Include only the necessary icon files on each platform
@@ -54,7 +54,7 @@ settings =
 			},
 		},
 	},
-	
+
 	--
 	-- Android Section
 	--
