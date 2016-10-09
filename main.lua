@@ -6,22 +6,22 @@
 
 -- Your code here
 
---‘¼ƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ
+--ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã®æŒ‡å®š
 local scroll = require("scroll")
 local SE_coin = audio.loadSound("Coin.mp3")
 
 
---•Ï”‚ÌéŒ¾
+--å®šæ•°
 local _W = display.contentWidth
 local _H = display.contentHeight
 
---”wŒi
+--èƒŒæ™¯ã®æŒ‡å®š
 local Back
 Back = scroll.newBackGround({"LoopBack"},{dir = "right", speed = 2})
 Back:show()
 
 
---ƒIƒuƒWƒFƒNƒg‚ÌéŒ¾
+--ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®å®šç¾©
 local myBall = display.newImage("ball.png",0,50)
 local coin = display.newImage("coin.png", math.random(40, _W-40), math.random(40, _H-40))
 local wall = display.newRect(_W/2, 20, _W+80, 6)
@@ -41,11 +41,11 @@ if(myBall.y > _H)then
 end
 
 
---•¨—‰‰Z
-local physics = require("physics") --•¨—‰‰Z‚Ì—LŒø‰»
+--ç‰©ç†æ¼”ç®—
+local physics = require("physics") --ç‰©ç†æ¼”ç®—ã®é–‹å§‹
 physics.start()
-physics.addBody(myBall, {density = 2, friction = 0.2, bounce = 1.005, radius = 20}) --ƒ{[ƒ‹‚Ö‚Ì•¨—‘®«•t—^
-physics.addBody(coin, "kinematic", {isSensor = true}) --ƒRƒCƒ“‚Ö‚Ì•¨—‘®«•t—^
+physics.addBody(myBall, {density = 2, friction = 0.2, bounce = 1.005, radius = 20}) --ãƒœãƒ¼ãƒ«ã®ç‰©ç†å±æ€§
+physics.addBody(coin, "kinematic", {isSensor = true}) --ã‚³ã‚¤ãƒ³ã®ç‰©ç†å±æ€§
 physics.addBody(wall, "static",{})
 physics.addBody(jamming, "static", {})
 physics.addBody(leftWall, "static", {})
