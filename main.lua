@@ -168,6 +168,27 @@ function DrawLine(event) -- 線を書く(最重要)
     end
 end
 
+function deleteLine(index)
+    -- ブロックが存在しない場合は無視する
+    if (myLines[index] == nil) then
+        return -- ここで関数を終了させる
+    end
+      display.remove(myLines[index]) -- 画面から消す関数
+      myLines[index] = nil -- メモリ解放
+      lineCount = lineCount - 1
+
+end
+
+function deleteAllLines()
+    -- for文で全て削除
+    for i = 0, maxLineNum, 1 do
+        deleteLine(i)
+    end
+      -- ブロックを管理している変数を全て初期化する
+      maxLineNum = 0
+      lineCount = 1
+      myLines = {}
+end
 ------------------------------------------------------------------------------
  -- ゲームロジック
 ------------------------------------------------------------------------------
@@ -216,6 +237,7 @@ function resetGame()
 
     physics.start()
 
+deleteAllLines()
     deployBlocks()
     resetBallPos()
     gameStart()
