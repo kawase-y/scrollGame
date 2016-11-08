@@ -158,6 +158,7 @@ function DrawLine(event) -- 線を書く(最重要)
                           display.remove(myLines[1])
                       end
                 if(resetJudge == true)then
+
                           display.remove(myLines[lineCount + 1])
                 end
                           lineCount = lineCount + 1
@@ -175,7 +176,8 @@ function deleteLine(index)
     end
       display.remove(myLines[index]) -- 画面から消す関数
       myLines[index] = nil -- メモリ解放
-      lineCount = lineCount - 1
+
+
 
 end
 
@@ -185,9 +187,9 @@ function deleteAllLines()
         deleteLine(i)
     end
       -- ブロックを管理している変数を全て初期化する
-      maxLineNum = 0
       lineCount = 1
       myLines = {}
+      resetJudge = false
 end
 ------------------------------------------------------------------------------
  -- ゲームロジック
