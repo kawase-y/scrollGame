@@ -25,7 +25,7 @@ bg:setFillColor( 1 )
 ------------------------------------------------------------------------------
 local walls = {
             display.newRect(3, _H/2, 6, _H), -- 左の壁
-            display.newRect(_W/2, _H/7, _W, 6), -- 上の壁
+            display.newRect(_W/2, _H/8, _W, 6), -- 上の壁
             display.newRect(_W -3, _H/2, 6, _H), -- 右の壁
       }
 for i=1, #walls, 1 do -- 壁の初期設定
@@ -46,8 +46,8 @@ bg2.anchorY = 0
 bg2.anchorX = 0
 bg2:setFillColor( 0.741, 0.843, 0.933)
 
-local menu = display.newImage("menu.png", _W*6/7, 30)
-menu:scale(0.2,0.2)
+local menu = display.newImage("menu.png", _W*9/10, 30)
+menu:scale(0.08,0.08)
 
 
 ------------------------------------------------------------------------------
@@ -160,6 +160,7 @@ function DrawLine(event) -- 線を書く(最重要)
               ty                              = event.y;
               myLines[lineCount]              = display.newLine(tx, ty, tx+5, ty)
               myLines[lineCount].strokeWidth  = 5
+              myLines[lineCount]:setStrokeColor(0.651, 0.651, 0.651)
               physics.addBody(myLines[lineCount], "static",{density = 0.0, friction = 0.0, bounce = 1.0})
               myLines[lineCount].tag = "var"
 
@@ -231,14 +232,14 @@ local completeText = nil
 function completeGame()
     physics.pause()
     completeText = display.newText("Complete", _W/2, _H/2, native.systemFont, 40)
-    completeText:setTextColor(1.0, 1.0, 1.0)
+    completeText:setTextColor(0.651, 0.651, 0.651)
      Runtime:addEventListener("tap", resetGame)
 end
 
 function failGame()
     physics.pause()
     completeText = display.newText("Fail", _W/2, _H/2, native.systemFont, 40)
-    completeText:setTextColor(1.0, 1.0, 1.0)
+    completeText:setTextColor(0.651, 0.651, 0.651)
      Runtime:addEventListener("tap", resetGame)
 end
 
