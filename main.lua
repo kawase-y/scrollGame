@@ -18,14 +18,14 @@ local Back
 bg 					= display.newRect( 0, 0, _W, _H )
 bg.anchorX 	= 0
 bg.anchorY 	= 0
-bg:setFillColor( 0,0.5,0.5 )
+bg:setFillColor( 1 )
 
 ------------------------------------------------------------------------------
 --壁の定義
 ------------------------------------------------------------------------------
 local walls = {
             display.newRect(3, _H/2, 6, _H), -- 左の壁
-            display.newRect(_W/2, 3, _W, 6), -- 上の壁
+            display.newRect(_W/2, _H/7, _W, 6), -- 上の壁
             display.newRect(_W -3, _H/2, 6, _H), -- 右の壁
       }
 for i=1, #walls, 1 do -- 壁の初期設定
@@ -40,6 +40,16 @@ physics.addBody( bottomWall, "static", {density = 0.0, friction = 0.0, bounce = 
 bottomWall.tag = "bottomWall"
 
 
+local Bar --上のバー
+bg2 = display.newRect( 0, 0, _W, _H/8)
+bg2.anchorY = 0
+bg2.anchorX = 0
+bg2:setFillColor( 0.741, 0.843, 0.933)
+
+local menu = display.newImage("menu.png", _W*6/7, 30)
+menu:scale(0.2,0.2)
+
+
 ------------------------------------------------------------------------------
  -- ボールの定義、ゲーム開始設定
 ------------------------------------------------------------------------------
@@ -47,6 +57,7 @@ bottomWall.tag = "bottomWall"
 local myBall = display.newImage("ball.png", 100, 100) -- ボール
 physics.addBody(myBall, {density = 0.0, friction = 0.0, bounce = 1.0}) --ボールの物理属性
 myBall.tag = "ball"
+myBall:scale(0.6,0.6) --ボールサイズ
 
 
 function resetBallPos()
