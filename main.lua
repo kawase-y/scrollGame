@@ -8,6 +8,8 @@ local widget  = require "widget"
 --定数
 local _W = display.contentWidth
 local _H = display.contentHeight
+local completeText = ""
+local menuBg = ""
 
 -- 物理演算開始
 physics.start()
@@ -19,36 +21,6 @@ bg 					= display.newRect( 0, 0, _W, _H )
 bg.anchorX 	= 0
 bg.anchorY 	= 0
 bg:setFillColor( 1 )
-
-------------------------------------------------------------------------------
---壁の定義
-------------------------------------------------------------------------------
-local walls = {
-            display.newRect(3, _H/2, 6, _H), -- 左の壁
-            display.newRect(_W/2, _H/8, _W, 6), -- 上の壁
-            display.newRect(_W -3, _H/2, 6, _H), -- 右の壁
-      }
-for i=1, #walls, 1 do -- 壁の初期設定
-        walls[i]:setFillColor(1, 1, 1) -- 白
-        physics.addBody( walls[i], "static", {density = 0.0, friction = 0.0, bounce = 1.0} ) -- 壁は重力で動かない静的なオブジェ
-        walls[i].tag = "wall"
-end
-
-local bottomWall = display.newRect(_W/2, _H -3, _W, 6) -- 下の壁
-bottomWall:setFillColor(1, 1, 1) -- 白
-physics.addBody( bottomWall, "static", {density = 0.0, friction = 0.0, bounce = 1.0} ) -- 壁は重力で動かない静的なオブジェ
-bottomWall.tag = "bottomWall"
-
-
-local Bar --上のバー
-bg2 = display.newRect( 0, 0, _W, _H/8)
-bg2.anchorY = 0
-bg2.anchorX = 0
-bg2:setFillColor( 0.741, 0.843, 0.933)
-
-local menu = display.newImage("menu.png", _W*9/10, 30)
-menu:scale(0.08,0.08)
-
 
 ------------------------------------------------------------------------------
  -- ボールの定義、ゲーム開始設定
@@ -71,6 +43,112 @@ function gameStart()
 end
 
 gameStart()
+
+------------------------------------------------------------------------------
+--壁の定義
+------------------------------------------------------------------------------
+local walls = {
+            display.newRect(3, _H/2, 6, _H), -- 左の壁
+            display.newRect(_W/2, _H/8, _W, 6), -- 上の壁
+            display.newRect(_W -3, _H/2, 6, _H), -- 右の壁
+      }
+for i=1, #walls, 1 do -- 壁の初期設定
+        walls[i]:setFillColor(1, 1, 0) -- 白
+        physics.addBody( walls[i], "static", {density = 0.0, friction = 0.0, bounce = 1.0} ) -- 壁は重力で動かない静的なオブジェ
+        walls[i].tag = "wall"
+end
+
+local bottomWall = display.newRect(_W/2, _H -3, _W, 6) -- 下の壁
+bottomWall:setFillColor(1, 1, 1) -- 白
+physics.addBody( bottomWall, "static", {density = 0.0, friction = 0.0, bounce = 1.0} ) -- 壁は重力で動かない静的なオブジェ
+bottomWall.tag = "bottomWall"
+
+------------------------------------------------------------------------------
+--メニューの定義
+------------------------------------------------------------------------------
+local Bar --上のバー
+bg2 = display.newRect( 0, 0, _W, _H/8)
+bg2.anchorY = 0
+bg2.anchorX = 0
+bg2:setFillColor( 0.741, 0.843, 0.933)
+
+local menu = display.newImage("menu.png", _W*9/10, 30)
+menu:scale(0.08,0.08)
+
+local judge = false --ダブルタップ防止
+
+function onRestartRelease()
+
+    restart:removeSelf()	-- widgets must be manually removed
+    restart = nil
+
+    back:removeSelf()	-- widgets must be manually removed
+    back = nil
+
+  menuBg.isVisible = false
+  menuBg:removeSelf()
+  judge = false
+completeText.text = ""
+  resetGame()
+end
+
+function onBackRelease()
+
+    restart:removeSelf()	-- widgets must be manually removed
+    restart = nil
+
+    back:removeSelf()	-- widgets must be manually removed
+    back = nil
+
+  menuBg.isVisible = false
+  menuBg:removeSelf()
+  judge = false
+  completeText.text = ""
+
+  physics.start()
+end
+
+function menuMode()
+  if(judge == false) then
+    menuBg = display.newRect(_W/2,_H/2, _W/3*2,_H/3*2)
+    menuBg:setFillColor(0)
+    completeText = display.newText("メニュー", _W/2, _H/4, native.systemFont, 40)
+    completeText:setTextColor(0.651, 0.651, 0.651)
+
+    restart = widget.newButton{
+  		label       = "リスタート",
+  		labelColor  = { default={255}, over={128} },
+  		defaultFile = "btn.png",
+  		overFile    = "btnover.png",
+  		width       = _W/3,
+      height      = _H/12,
+  		emboss      = true,
+  		onRelease   = onRestartRelease	-- event listener function
+  	}
+  	restart.x     = _W/2
+  	restart.y     = _H/3
+
+    back = widget.newButton{
+      label       = "戻る",
+      labelColor  = { default={255}, over={128} },
+      defaultFile = "btn.png",
+      overFile    = "btnover.png",
+      width       = _W/3,
+      height      = _H/12,
+      emboss      = true,
+      onRelease   = onBackRelease	-- event listener function
+    }
+    back.x     = _W/2
+    back.y     = _H/3*2
+
+    physics.pause()
+    print("menu")
+judge = true
+  end
+
+end
+
+menu:addEventListener("touch",menuMode)
 
 ------------------------------------------------------------------------------
  -- ブロックの定義
@@ -227,7 +305,7 @@ function ballStabilization()
 end
 
 
-local completeText = nil
+
 
 function completeGame()
     physics.pause()
@@ -251,7 +329,7 @@ function resetGame()
 
     physics.start()
 
-deleteAllLines()
+    deleteAllLines()
     deployBlocks()
     resetBallPos()
     gameStart()
