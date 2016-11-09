@@ -183,18 +183,35 @@ function deployBlocks()
     -- ブロックを配置する前に全てのブロックを削除
     deleteAllBlocks()
 
-    -- ブロックを配置
-    for y = 0, 1, 1 do
-        for x = 0, 4, 1 do
+--[[
+   -- ブロックを配置1
+    for y = 0, 1, 1 do --０から１ずつ増やして１まで
+        for x = 0, 4, 1 do --０から１ずつ増やして４まで　　理解！
             -- 何番目の要素か
+
+            local selectBlock = math.random(5) --ブロックのカラフル表示
+            local blockName
+            if selectBlock == 1 then
+              blockName = "blockBLU.png"
+            elseif selectBlock == 2 then
+              blockName = "blockGRN.png"
+            elseif selectBlock == 3 then
+              blockName = "blockGRY.png"
+            elseif selectBlock == 4 then
+              blockName = "blockPNK.png"
+            elseif selectBlock == 5 then
+              blockName = "blockYEL.png"
+            end
+
             local index = x + (y * 5) -- indexは0-9まで
-            blocks[index] = display.newImage("block.png", _W * 1/8, 100) -- この後再配置するためこの座標(_W * 1/8, 100)は意味なし
+            blocks[index] = display.newImage(blockName, _W * 1/8, 100) -- この後再配置するためこの座標(_W * 1/8, 100)は意味なし
+            blocks[index]:scale(0.8,0.8)
 
             -- (width * 1/6) => 画面を6つに分ける、2つは両端なので、実際に使えるのは4つ
             -- (x + 1) => 分けた4つのうちの何番目か、0は端っこなので+1して無視する
             blocks[index].x = (x + 1) * _W/6
 
-            blocks[index].y = _H/6 + (_H/6 * y)
+            blocks[index].y = _H/5 + (_H/5 * y)
             blocks[index].tag = "block"
 
             blocks[index].index = index  -- 後で識別しやすいように生成した順番を入れておく
@@ -204,6 +221,129 @@ function deployBlocks()
             numBlocks = numBlocks + 1
         end
     end
+    --]]
+
+--[[
+    -- ブロックを配置2
+    for y = 0, 3, 1 do --０から１ずつ増やして3まで
+        for x = 0, 5 , 1 do --０から１ずつ増やして7まで　　理解！
+            -- 何番目の要素か
+
+            local blockName
+            if y == 0 then
+              blockName = "blockBLU.png"
+            elseif y == 1 then
+              blockName = "blockGRN.png"
+            elseif y == 2 then
+              blockName = "blockGRY.png"
+            elseif y == 3 then
+              blockName = "blockPNK.png"
+            end
+
+            local index = x + (y * 6) -- indexは0-32まで
+            blocks[index] = display.newImage(blockName, _W * 1/8, 100) -- この後再配置するためこの座標(_W * 1/8, 100)は意味なし
+            blocks[index]:scale( 0.8, 0.8)
+
+            -- (width * 1/6) => 画面を6つに分ける、2つは両端なので、実際に使えるのは4つ
+            -- (x + 1) => 分けた4つのうちの何番目か、0は端っこなので+1して無視する
+            blocks[index].x = (x + 1) * _W/7
+
+            blocks[index].y = _H/5 + (_H/10 * y)
+            blocks[index].tag = "block"
+
+            blocks[index].index = index  -- 後で識別しやすいように生成した順番を入れておく
+            physics.addBody(blocks[index], "static", {density = 0.0, friction = 0.0, bounce = 1.0})
+
+            -- 現在のブロック数を追加
+            numBlocks = numBlocks + 1
+        end
+    end
+
+    --]]
+
+
+    -- ブロックを配置3
+    for y = 0, 3, 1 do --０から１ずつ増やして１まで
+        for x = 0, 2, 1 do --０から１ずつ増やして４まで　　理解！
+            -- 何番目の要素か
+
+            local selectBlock = math.random(6) --ブロックのカラフル表示
+            local blockName
+            if selectBlock == 1 then
+              blockName = "blockBLU.png"
+            elseif selectBlock == 2 then
+              blockName = "blockGRN.png"
+            elseif selectBlock == 3 then
+              blockName = "blockGRY.png"
+            elseif selectBlock == 4 then
+              blockName = "blockPNK.png"
+            elseif selectBlock == 5 then
+              blockName = "blockYEL.png"
+            elseif selectBlock == 6 then
+            blockName = "blockORG.png"
+            end
+
+            local index = x + (y * 3) -- indexは0-9まで
+            blocks[index] = display.newImage(blockName, _W * 1/8, 100) -- この後再配置するためこの座標(_W * 1/8, 100)は意味なし
+            blocks[index]:scale(0.8,0.8)
+
+            -- (width * 1/6) => 画面を6つに分ける、2つは両端なので、実際に使えるのは4つ
+            -- (x + 1) => 分けた4つのうちの何番目か、0は端っこなので+1して無視する
+            blocks[index].x = (x + 1 + y/2) * _W/6
+
+            blocks[index].y = _H/5 + (_H/10 * y)
+            blocks[index].tag = "block"
+
+            blocks[index].index = index  -- 後で識別しやすいように生成した順番を入れておく
+            physics.addBody(blocks[index], "static", {density = 0.0, friction = 0.0, bounce = 1.0})
+
+            -- 現在のブロック数を追加
+            numBlocks = numBlocks + 1
+        end
+    end
+  
+
+
+--[[-- ブロックを配置4
+for y = 0, 4, 1 do --０から１ずつ増やして１まで
+    for x = 0, 4, 1 do --０から１ずつ増やして４まで　　理解！
+        -- 何番目の要素か
+
+
+        local blockName
+        if y == 0 then
+          blockName = "blockBLU.png"
+        elseif y == 1 then
+          blockName = "blockGRN.png"
+        elseif y == 2 then
+          blockName = "blockGRY.png"
+        elseif y == 3 then
+          blockName = "blockPNK.png"
+        elseif y == 4 then
+          blockName = "blockYEL.png"
+        elseif y == 5 then
+          blockName = "blockORG.png"
+        end
+
+        local index = x + (y * 5) -- indexは0-9まで
+        blocks[index] = display.newImage(blockName, _W * 1/8, 100) -- この後再配置するためこの座標(_W * 1/8, 100)は意味なし
+        blocks[index]:scale(0.6,0.6)
+
+        -- (width * 1/6) => 画面を6つに分ける、2つは両端なので、実際に使えるのは4つ
+        -- (x + 1) => 分けた4つのうちの何番目か、0は端っこなので+1して無視する
+        if x == 0 then
+          blocks[index].x = (x + 1) * _W/6
+
+        blocks[index].y = _H/5 + (_H/5 * y)
+        blocks[index].tag = "block"
+
+        blocks[index].index = index  -- 後で識別しやすいように生成した順番を入れておく
+        physics.addBody(blocks[index], "static", {density = 0.0, friction = 0.0, bounce = 1.0})
+
+        -- 現在のブロック数を追加
+        numBlocks = numBlocks + 1
+    end
+end --]]
 
     -- 生成したブロック数を保存
     maxNumBlocks = numBlocks
@@ -359,3 +499,4 @@ end
 myBall:addEventListener("collision", ballCollision)
 -- 線を引く(最重要)
 Runtime:addEventListener("touch", DrawLine)
+--]]
