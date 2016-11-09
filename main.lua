@@ -17,7 +17,7 @@ physics.setGravity(0, 0)
 
 --背景設定
 local Back
-bg 					= display.newRect( 0, 0, _W, _H )
+bg 					= display.newRect( 0, _H/8, _W, _H/8*7 )
 bg.anchorX 	= 0
 bg.anchorY 	= 0
 bg:setFillColor( 1 )
@@ -26,7 +26,7 @@ bg:setFillColor( 1 )
  -- ボールの定義、ゲーム開始設定
 ------------------------------------------------------------------------------
 
-local myBall = display.newImage("ball.png", 100, 100) -- ボール
+local myBall = display.newImage("ball.png", _W/2, _H/3*2) -- ボール
 physics.addBody(myBall, {density = 0.0, friction = 0.0, bounce = 1.0}) --ボールの物理属性
 myBall.tag = "ball"
 myBall:scale(0.6,0.6) --ボールサイズ
@@ -34,7 +34,7 @@ myBall:scale(0.6,0.6) --ボールサイズ
 
 function resetBallPos()
     myBall.x = _W/2
-    myBall.y = _H/2
+    myBall.y = _H/3*2
 end
 
 function gameStart()
@@ -301,7 +301,7 @@ function deployBlocks()
             numBlocks = numBlocks + 1
         end
     end
-  
+
 
 
 --[[-- ブロックを配置4
@@ -426,7 +426,7 @@ end
 ------------------------------------------------------------------------------
 
 function ballStabilization()
-    -- 速度を取得して、x,yの速度を500に固定する
+    -- 速度を取得して、x,yの速度を300に固定する
     local vx, vy = myBall:getLinearVelocity()
       if (0 < vx) then
           vx = 300
@@ -451,18 +451,18 @@ function completeGame()
     physics.pause()
     completeText = display.newText("Complete", _W/2, _H/2, native.systemFont, 40)
     completeText:setTextColor(0.651, 0.651, 0.651)
-     Runtime:addEventListener("tap", resetGame)
+     bg:addEventListener("tap", resetGame)
 end
 
 function failGame()
     physics.pause()
     completeText = display.newText("Fail", _W/2, _H/2, native.systemFont, 40)
     completeText:setTextColor(0.651, 0.651, 0.651)
-     Runtime:addEventListener("tap", resetGame)
+     bg:addEventListener("tap", resetGame)
 end
 
 function resetGame()
-    Runtime:removeEventListener("tap", resetGame)
+    bg:removeEventListener("tap", resetGame)
 
     completeText:removeSelf()
     completeText = nil
