@@ -49,8 +49,10 @@ function resetBallPos()
 end
 
 function gameStart()
+
     resetBallPos()
     myBall:setLinearVelocity(0, 100) -- y方向の初速度
+			      physics.start()
 end
 
 function count1()
@@ -73,13 +75,13 @@ function countGo()
 	gameStart()
 end
 
-
+function startCount()
 timer.performWithDelay(0, count1)
 timer.performWithDelay(1000, count2)
 timer.performWithDelay(2000, count3)
 timer.performWithDelay(3000, countGo)
-
-
+end
+startCount()
 
 ------------------------------------------------------------------------------
 --壁の定義
@@ -520,13 +522,13 @@ end
 
 function resetGame()
     bg:removeEventListener("tap", resetGame)
+		completeText.text = ""
     if(lastballs == -1)then
         completeText.text = ""
-        physics.start()
+resetBallPos()
         deleteAllLines()
         deployBlocks()
-        resetBallPos()
-        gameStart()
+        startCount()
         lastballs = 3
         ballmenu.text = "○ ×"..lastballs
     else
@@ -535,10 +537,9 @@ function resetGame()
              complete = false
       end
       completeText.text = ""
-        physics.start()
+resetBallPos()
         deleteAllLines()
-        resetBallPos()
-        gameStart()
+        startCount()
     end
 end
 
@@ -547,6 +548,8 @@ function ballCollision(event)
 
     elseif (event.phase == "ended") then
         ballStabilization()
+				print("clash")
+completeText.text = ""
 
         -- ブロックに当たった時はブロックを削除
         if (event.other.tag == "block") then
