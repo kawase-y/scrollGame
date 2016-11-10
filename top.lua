@@ -6,6 +6,13 @@ local scroll  = require("scroll")
 local physics = require("physics")
 local widget  = require "widget"
 local scene = composer.newScene()
+local bgm = media.playSound("music/bgm.mp3",loop)
+local bsound = media.newEventSound( "music/block.mp3" )
+local wsound = media.newEventSound( "music/bound.mp3" )
+local gsound = media.newEventSound( "music/gameover(2).mp3" )
+local badend = media.newEventSound( "music/badend.mp3" )
+local goodend = media.newEventSound( "music/goodend.mp3" )
+
 
 
 function scene:create( event )
@@ -17,7 +24,8 @@ local _H = display.contentHeight
 local completeText = display.newText("", _W/2, _H/2, native.systemFont, 40)
 local menuBg = ""
 local lastballs = 3 --3回まで玉を落とせる
-
+local judge = false --ダブルタップ防止
+local score = 0 --連続クリア回数
 
 
 
@@ -53,6 +61,7 @@ function gameStart()
     resetBallPos()
     myBall:setLinearVelocity(0, 100) -- y方向の初速度
 			      physics.start()
+						judge = false
 end
 
 function count1()
@@ -76,6 +85,7 @@ function countGo()
 end
 
 function startCount()
+	judge = true
 timer.performWithDelay(0, count1)
 timer.performWithDelay(1000, count2)
 timer.performWithDelay(2000, count3)
@@ -115,7 +125,7 @@ local menu = display.newImage("menu.png", _W*9/10, 30)
 menu:scale(0.08,0.08)
 local ballmenu = display.newText("○ ×"..lastballs, _W/4, _H/16, native.systemFont, 40)
 
-local judge = false --ダブルタップ防止
+
 
 function onRestartRelease()
 
@@ -128,8 +138,9 @@ function onRestartRelease()
   menuBg.isVisible = false
   menuBg:removeSelf()
   judge = false
-completeText.text = ""
-  resetGame()
+gameOverReset()
+bgm = media.playSound("music/bgm.mp3",loop)
+
 end
 
 function onBackRelease()
@@ -146,6 +157,7 @@ function onBackRelease()
   completeText.text = ""
 
   physics.start()
+	media.playSound()
 end
 
 function menuMode()
@@ -167,7 +179,7 @@ function menuMode()
   		onRelease   = onRestartRelease	-- event listener function
   	}
   	restart.x     = _W/2
-  	restart.y     = _H/3
+  	restart.y     = _H/7*3
 
     back = widget.newButton{
       label       = "戻る",
@@ -184,6 +196,7 @@ function menuMode()
 
     physics.pause()
     print("menu")
+		media.pauseSound()
 judge = true
   end
 
@@ -345,7 +358,7 @@ end
 
 
 switchBlocks[4] = function()
-for y = 0, 4, 1 do --０から１ずつ増やして１まで
+for y = 0, 1, 1 do --０から１ずつ増やして１まで
     for x = 0, 4, 1 do --０から１ずつ増やして４まで　　理解！
         -- 何番目の要素か
 
@@ -371,18 +384,61 @@ for y = 0, 4, 1 do --０から１ずつ増やして１まで
 
         -- (width * 1/6) => 画面を6つに分ける、2つは両端なので、実際に使えるのは4つ
         -- (x + 1) => 分けた4つのうちの何番目か、0は端っこなので+1して無視する
-        if x == 0 then
+
           blocks[index].x = (x + 1) * _W/6
 
-        blocks[index].y = _H/5 + (_H/5 * y)
-        blocks[index].tag = "block"
+        blocks[index].y = _H/5 + (_H/5 *3* y)
 
+        blocks[index].tag = "block"
         blocks[index].index = index  -- 後で識別しやすいように生成した順番を入れておく
         physics.addBody(blocks[index], "static", {density = 0.0, friction = 0.0, bounce = 1.0})
 
         -- 現在のブロック数を追加
         numBlocks = numBlocks + 1
+
+      end
+end
+end
+
+switchBlocks[5] = function()
+for x = 0, 1, 1 do --０から１ずつ増やして１まで
+    for y = 0, 4, 1 do --０から１ずつ増やして４まで　　理解！
+        -- 何番目の要素か
+
+
+        local blockName
+        if y == 0 then
+          blockName = "blockBLU.png"
+        elseif y == 1 then
+          blockName = "blockGRN.png"
+        elseif y == 2 then
+          blockName = "blockGRY.png"
+        elseif y == 3 then
+          blockName = "blockPNK.png"
+        elseif y == 4 then
+          blockName = "blockYEL.png"
+        elseif y == 5 then
+          blockName = "blockORG.png"
         end
+
+        local index = y + (x * 5) -- indexは0-9まで
+        blocks[index] = display.newImage(blockName, _W * 1/8, 100) -- この後再配置するためこの座標(_W * 1/8, 100)は意味なし
+  --      blocks[index]:scale(0.6,0.6)
+
+        -- (width * 1/6) => 画面を6つに分ける、2つは両端なので、実際に使えるのは4つ
+        -- (x + 1) => 分けた4つのうちの何番目か、0は端っこなので+1して無視する
+
+          blocks[index].y = (y + 1) * _H/6
+
+        blocks[index].x = _W/5 + (_W/5 *3* x)
+
+        blocks[index].tag = "block"
+        blocks[index].index = index  -- 後で識別しやすいように生成した順番を入れておく
+        physics.addBody(blocks[index], "static", {density = 0.0, friction = 0.0, bounce = 1.0})
+
+        -- 現在のブロック数を追加
+        numBlocks = numBlocks + 1
+
       end
 end
 end
@@ -391,10 +447,11 @@ end
 function deployBlocks()
     -- ブロックを配置する前に全てのブロックを削除
     deleteAllBlocks()
-local i = math.random(1,4)
+local i = math.random(1,5)
     switchBlocks[i]()
     -- 生成したブロック数を保存
     maxNumBlocks = numBlocks
+
 end
 
 deployBlocks()
@@ -405,7 +462,7 @@ deployBlocks()
 
 local myLines    = {} -- 線の定義
 local lineCount  = 1 -- 線の初期値
-local maxLineNum = 100
+local maxLineNum = 50
 local resetJudge = false -- 線の数の最大値を判定
 local tx; local ty; -- 線の始点
 
@@ -424,9 +481,9 @@ function DrawLine(event) -- 線を書く(最重要)
 
               tx                              = event.x;
               ty                              = event.y;
-              myLines[lineCount]              = display.newLine(tx, ty, tx+5, ty)
-              myLines[lineCount].strokeWidth  = 5
-              myLines[lineCount]:setStrokeColor(0.651, 0.651, 0.651)
+              myLines[lineCount]              = display.newImage("block.png",tx, ty)
+          --    myLines[lineCount].strokeWidth  = 5
+          --    myLines[lineCount]:setStrokeColor(0.651, 0.651, 0.651)
               physics.addBody(myLines[lineCount], "static",{density = 0.0, friction = 0.0, bounce = 1.0})
               myLines[lineCount].tag = "var"
 
@@ -477,14 +534,14 @@ function ballStabilization()
     -- 速度を取得して、x,yの速度を300に固定する
     local vx, vy = myBall:getLinearVelocity()
       if (0 < vx) then
-          vx = 300
+          vx = 100
       else
-          vx = -300
+          vx = -100
       end
       if (0 < vy) then
-          vy = 300
+          vy = 100
       else
-          vy = -300
+          vy = -100
       end
     -- 速度を安定させる
     myBall:setLinearVelocity(vx, vy)
@@ -501,13 +558,21 @@ function completeGame()
     completeText:setTextColor(0.651, 0.651, 0.651)
      bg:addEventListener("tap", resetGame)
      complete = true
+		 score = score + 1
 
 end
 
 function failGame()
     physics.pause()
     if (lastballs == 0)then
-      completeText.text = "GameOver\nRestart To Tap!!"
+			if(score > 1)then
+			completeText = display.newText("GameSet!\nあなたは"..score.."回連続クリアしました!\nタップでリスタート!", _W/2, _H/2, native.systemFont, 20)
+			media.playEventSound( goodend )
+		else
+			completeText = display.newText("GameOver!\nタップでリスタート!", _W/2, _H/2, native.systemFont, 20)
+			media.playEventSound( badend )
+			end
+media.pauseSound()
       completeText:setTextColor(0.651, 0.651, 0.651)
       bg:addEventListener("tap", resetGame)
       lastballs = lastballs - 1
@@ -524,13 +589,7 @@ function resetGame()
     bg:removeEventListener("tap", resetGame)
 		completeText.text = ""
     if(lastballs == -1)then
-        completeText.text = ""
-resetBallPos()
-        deleteAllLines()
-        deployBlocks()
-        startCount()
-        lastballs = 3
-        ballmenu.text = "○ ×"..lastballs
+gameOverReset()
     else
       if (complete == true)then
              deployBlocks()
@@ -543,16 +602,29 @@ resetBallPos()
     end
 end
 
+function gameOverReset()
+	completeText.text = ""
+resetBallPos()
+	deleteAllLines()
+	deployBlocks()
+	startCount()
+	lastballs = 3
+	ballmenu.text = "○ ×"..lastballs
+	bgm = media.playSound("music/bgm.mp3",loop)
+end
+
 function ballCollision(event)
     if (event.phase == "began") then
 
     elseif (event.phase == "ended") then
         ballStabilization()
-				print("clash")
+
 completeText.text = ""
+
 
         -- ブロックに当たった時はブロックを削除
         if (event.other.tag == "block") then
+					media.playEventSound( wsound )
             local hitBlock = event.other
             deleteBlock(hitBlock.index)
             -- ブロックがなくなった場合はクリア判定
@@ -560,8 +632,10 @@ completeText.text = ""
               completeGame()
             end
         elseif (event.other.tag == "bottomWall") then
+					media.playEventSound( gsound )
               failGame()
         end
+				media.playEventSound( bsound )
     end
 end
 
