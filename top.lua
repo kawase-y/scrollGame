@@ -14,7 +14,7 @@ function scene:create( event )
 --定数
 local _W = display.contentWidth
 local _H = display.contentHeight
-local completeText = display.newText("", _W/2, _H/4, native.systemFont, 40)
+local completeText = display.newText("", _W/2, _H/2, native.systemFont, 40)
 local menuBg = ""
 local lastballs = 3 --3回まで玉を落とせる
 
@@ -53,7 +53,33 @@ function gameStart()
     myBall:setLinearVelocity(0, 100) -- y方向の初速度
 end
 
-gameStart()
+function count1()
+	completeText = display.newText("3", _W/2, _H/3*2 - 50, native.systemFont, 40)
+	completeText:setTextColor(0.651, 0.651, 0.651)
+	print(3)
+end
+function count2()
+	completeText.text = "2"
+	    completeText:setTextColor(0.651, 0.651, 0.651)
+	print(2)
+end
+function count3()
+	completeText.text = "1"
+	    completeText:setTextColor(0.651, 0.651, 0.651)
+	print(1)
+end
+function countGo()
+	completeText.text = "Start!!"
+	gameStart()
+end
+
+
+timer.performWithDelay(0, count1)
+timer.performWithDelay(1000, count2)
+timer.performWithDelay(2000, count3)
+timer.performWithDelay(3000, countGo)
+
+
 
 ------------------------------------------------------------------------------
 --壁の定義
@@ -479,12 +505,12 @@ end
 function failGame()
     physics.pause()
     if (lastballs == 0)then
-      completeText = display.newText("GameOver\nRestart To Tap!!", _W/2, _H/2, native.systemFont, 40)
+      completeText.text = "GameOver\nRestart To Tap!!"
       completeText:setTextColor(0.651, 0.651, 0.651)
       bg:addEventListener("tap", resetGame)
       lastballs = lastballs - 1
     else
-    completeText = display.newText("Fail", _W/2, _H/2, native.systemFont, 40)
+    completeText.text = "Fail"
     completeText:setTextColor(0.651, 0.651, 0.651)
      bg:addEventListener("tap", resetGame)
      lastballs = lastballs - 1
